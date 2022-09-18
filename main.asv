@@ -1,4 +1,4 @@
-clear, close;
+clear;
 
 %% defining the constants
 lambda    = 1;
@@ -37,7 +37,6 @@ scatter(lambda + radius(2)*cos(nodes),radius(2)*sin(nodes),'k','filled');
 %% formulating the problem
 %defining the known side of Ax = c i.e. c
 %for phi_i(or Ei) vector
-
 %scatterer 1 coordinates
 X1 = -lambda + radius(1)*cos(test_pts);
 Y1 = radius(1)*sin(test_pts);
@@ -46,53 +45,13 @@ X2 = lambda + radius(2)*cos(test_pts);
 Y2 = radius(2)*sin(test_pts);
 
 %angle for the incident plane wave
-%for scatterer 1
 alpha1 = (X1 * sin(theta0) * cos(phi0)) + (Y1 * sin(theta0) * sin(phi0));
-%for scatterer 2
 alpha2 = (X2 * sin(theta0) * cos(phi0)) + (Y2 * sin(theta0) * sin(phi0));
-
 %incident electric field on surface of scatterer 1
 Ei1 = E0 * exp(-1i * k1 * alpha1);     
 %incident electric field on surface of scatterer 2
 Ei2 = E0 * exp(-1i * k2 * alpha2);     
 
-
 %% plotting the result
 
 %% defining functions
-%% function definitions
-%%green function
-function g = green(rpnl,rpnu,n,rnl,rnu,m,k)
-    rps = ((1-n).*rpnl) + (n.*rpnu);
-    rt  = ((1-m).*rnl)  + (m.*rnu);
-    rho = norm(rt-rps);
-    g   = (-1j/4) * besselh(0,2,k.*rho);
-end
-
-%%grad_green
-function gg = gradg(rpnl,rpnu,n,rnl,rnu,m,nhat,k)
-    rps  = ((1-n).*rpnl) + (n.*rpnu);
-    rt   = ((1-m).*rnl)  + (m.*rnu);
-    rho  = norm(rt-rps);
-    rhat = (rt-rps)./rho;
-    gg   = (1j*k/4) * besselh(1,2,k.*rho) .* dot(rhat,nhat);
-end
-
-%%gauss quadrature
-function y = gaussquad(f,n)
-%     wt = zeros(n,1);
-%     xi = zeros(n,1);
-    if n == 1
-        wt(1)  = 1; 
-        xi(1) = 1;
-    elseif n == 2
-        xi(1) = (1 - 1/sqrt(3))/2;
-        xi(2) = (1 + 1/sqrt(3))/2;
-        wt(1) = 0.5;
-        wt(2) = 0.5;
-    end
-    y = 0;
-    for i = 1:n
-        y = y + wt(i) * f(xi(i));
-    end
-end
