@@ -107,9 +107,6 @@ for i = 1:2*N
             else
                 Q(i,j) =  l(1) * gaussquad(gk0,n);
                 T(i,j) = -l(1) * gaussquad(ggk0,n);
-
-%                 U(i,j) = -l(1) * gaussquad(gk0,n);%questionable
-%                 V(i,j) = -l(1) * gaussquad(ggk0,n);%questionable
             end
         %r on object 2 and r prime on object 1
         elseif i<=N && j>N
@@ -129,20 +126,17 @@ for i = 1:2*N
         elseif i>N && j>N
             if i==j
                 %check if there would be -ve sign here or not
-                U(i-N,j-N) = gdiag(k0);
-                V(i-N,j-N) = 1/2;
+                U(i,j-N) = -gdiag(k0);
+                V(i,j-N) = -1/2;
             else
-                U(i-N,j-N) = -l(1) * gaussquad(gk0,n);
-                V(i-N,j-N) = -l(1) * gaussquad(ggk0,n);
-
-%                 Q(i-N,j-N) = -l(1) * gaussquad(gk0,n);%questionable
-%                 T(i-N,j-N) = -l(1) * gaussquad(ggk0,n);%questionable
+                U(i,j-N) = -l(1) * gaussquad(gk0,n);
+                V(i,j-N) = -l(1) * gaussquad(ggk0,n);
             end
         end
     end
 end
 %A = [Q T U V; W X O O; O O Y Z]
-A = [Q T U V; W X zeros(N,N) zeros(N,N); zeros(N,N) zeros(N,N) Y Z];
+A = [Q, T, U, V; W, X, zeros(N,N), zeros(N,N); zeros(N,N), zeros(N,N), Y, Z];
 
 %creating y in Ax = y
 %y(1:N)=incident field on S1
@@ -152,7 +146,7 @@ y = [Ei1, Ei2, zeros(1,2*N)];
 
 %solution vector
 x = A\y';
-imagesc(abs(A)); colorbar;
+% imagesc(abs(A)); colorbar;
 
 %finding the total field now using huygen principle
 
