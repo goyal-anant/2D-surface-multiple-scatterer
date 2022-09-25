@@ -1,5 +1,5 @@
 clear, close;
-
+tic
 %% defining the constants
 lambda    = 1;
 epsilonr1 = 4;
@@ -149,10 +149,49 @@ x = A\y';
 % imagesc(abs(A)); colorbar;
 
 %finding the total field now using huygen principle
+oradius   = 200 * lambda;
+oN        = 100;
+ostep     = 2*pi/oN;
+onodes    = 0:ostep:2*pi-ostep;
+otest_pts = ostep/2 : ostep : 2*pi-ostep/2;
+farfield  = zeros(1,oN); %scattered far field
+
+for i = 1:oN
+    rpnl = [oradius*cos(otest_pts(i) - (ostep/2)) oradius*sin(otest_pts(i) - (ostep/2))];
+    rpnu = [oradius*cos(otest_pts(i) + (ostep/2)) oradius*sin(otest_pts(i) + (ostep/2))];
+    for j = 1:2*N
+        if j <= N
+            %first object
+            rnl = [-lambda + radius(1)*cos(test_pts(j) - (step/2)), radius(1)*sin(test_pts(j) - (step/2))];
+            rnu = [-lambda + radius(1)*cos(test_pts(j) + (step/2)), radius(1)*sin(test_pts(j) + (step/2))];
+            nhat= [-lambda + cos(test_pts(j)), sin(test_pts(j))];
+        else
+            %second object
+            rnl = [lambda + radius(2)*cos(test_pts(j-N) - (step/2)), radius(2)*sin(test_pts(j-N) - (step/2))];
+            rnu = [lambda + radius(2)*cos(test_pts(j-N) + (step/2)), radius(2)*sin(test_pts(j-N) + (step/2))];
+            nhat= [lambda + cos(test_pts(j-N)), sin(test_pts(j-N))];
+        end
+
+        gk1  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k1);
+        ggk1 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k1);
+        gk2  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k2);
+        ggk2 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k2);
+
+        if j<=N
+            farfield(i) = farfield(i) - l(1) * (x(j) * gaussquad(gk1,n) - x(j+N) * gaussquad(ggk1,n));
+        else
+            farfield(i) = farfield(i) - l(2) * (x(j) * gaussquad(gk2,n) - x(j+N) * gaussquad(ggk2,n));
+        end
+    end
+end
 
 
 %% plotting the result
-
+s = polarplot(onodes,-20*log10(2*pi*oradius*abs(farfield)),'blue');
+set(s,'LineWidth',3);
+ax = gca; 
+ax.FontSize = 25; 
+toc
 %% defining functions
 
 %%green function
