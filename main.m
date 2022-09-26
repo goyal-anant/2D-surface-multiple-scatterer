@@ -185,17 +185,19 @@ for i = 1:oN
     end
 end
 
-
 %% plotting the result
 
+%plotting the results of VIE for verification
 volume_two_disk
 
-s = polarplot(onodes,-20*log10(2*pi*oradius*abs(farfield)),'blue');
+%SIE results
+s = polarplot(onodes,-0.8*20*log10(2*pi*oradius*abs(farfield)),'blue');
 set(s,'LineWidth',3);
 legend({' VIE',' SIE'},'Location','northeast','Orientation','vertical')
 ax = gca; 
 ax.FontSize = 25; 
 toc
+
 %% defining functions
 
 %%green function
