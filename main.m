@@ -11,7 +11,7 @@ phi0      = 0; %incident angle
 theta0    = pi/2;
 E0        = 1; %incident field amplitude
 gamma     = 0.577; %for hankel fun approximation
-n         = 2; %for gaussquad
+n         = 4; %for gaussquad
 
 %% building the scatterers
 %here we will make two cylindrical discs in the domain
@@ -215,31 +215,7 @@ end
 function y = gaussquad(f,n)
 %     wt = zeros(n,1);
 %     xi = zeros(n,1);
-    if n == 1
-        wt(1)  = 1; 
-        xi(1) = 1;
-    elseif n == 2
-        xi(1) = (1 - 1/sqrt(3))/2;
-        xi(2) = (1 + 1/sqrt(3))/2;
-        wt(1) = 0.5;
-        wt(2) = 0.5;
-    elseif n == 3
-        xi(1) = (1 + 0)/2;
-        xi(2) = (1 - 0.7745)/2;
-        xi(3) = (1 + 0.7745)/2;
-        wt(1) = 0.5 * 0.8888;
-        wt(2) = 0.5 * 0.5555;
-        wt(3) = 0.5 * 0.5555;
-    elseif n == 4
-        xi(1) = (1 - 0.3399)/2;
-        xi(2) = (1 + 0.3399)/2;
-        xi(3) = (1 - 0.8611)/2;
-        xi(4) = (1 + 0.8611)/2;
-        wt(1) = 0.5 * 0.6521;
-        wt(2) = 0.5 * 0.6521;
-        wt(3) = 0.5 * 0.3478;
-        wt(4) = 0.5 * 0.3478;
-    end
+    [xi,wt] = lgwt(n,0,1);
     y = 0;
     for i = 1:n
         y = y + wt(i) * f(xi(i));
