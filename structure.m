@@ -3,9 +3,9 @@
 %plot_flag as input arguments and returns the coordinates of the disc(or
 %any structure).
 
-function [X, Y] = structure(N,lambda,radius,plot_flag)
+function [X, Y] = structure(N,lambda,radius1,radius2,plot_flag)
     %generating the square space
-    x = linspace(-lambda,lambda,N);
+    x = linspace(-2*lambda,2*lambda,N);
     y = x;
     
     [X1, Y1] = meshgrid(x,y);
@@ -15,7 +15,7 @@ function [X, Y] = structure(N,lambda,radius,plot_flag)
     %for selecting out disk in the space
     t = 0;
     for i = 1:length(X1)
-        if X1(i)^2 + Y1(i)^2 <= radius^2
+        if ((X1(i) + lambda)^2 + Y1(i)^2 <= radius1^2) || ((X1(i) - lambda)^2 + Y1(i)^2 <= radius2^2)
             t    = t + 1;
             X(t) = X1(i);
             Y(t) = Y1(i);

@@ -1,4 +1,4 @@
-function volume_disk
+function volume_two_disk
     %%% defining constants
     % epsilon0 = 8.853e-12;
     epsilonr = 4;           %relative permitivity of the dielectric shell
@@ -8,16 +8,17 @@ function volume_disk
     lambda   = 1;           %wavelength 
     E0       = 1;           %electric field amplitude 
     k        = 2*pi/lambda; %wave vector
-    outer    = 0.30;        %outer radius
-    inner    = 0.25;        %inner radius
-    
+    outer1    = 0.30;        %outer radius scatterer 1
+    %inner    = 0.25;        %inner radius
+    outer2    = 0.30;        %outer radius scatterer 1
+
     %%%building the scatterer
     %function [X1, Y1] = dielectric_shell(outer,inner,lambda,N,plot_flag)
-    N         = 50; %no. of pixels in the space
+    N         = 150; %no. of pixels in the space
     plot_flag = 0;  %put 1 to plot
     % [X1,Y1,r,X,Y]   = dielectric_shell(outer,inner,lambda,N,plot_flag);
     % [X1, Y1, r, X, Y] = dielectric_half_shell(outer,inner,lambda,N,plot_flag);
-    [X1, Y1] = structure(N,lambda,outer,plot_flag);
+    [X1, Y1] = structure(N,lambda,outer1,outer2,plot_flag);
     
     %%%formulating and solving the problem
     %a = %lambda/50;  %side of the square patch
