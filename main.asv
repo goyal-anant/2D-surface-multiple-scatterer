@@ -41,6 +41,7 @@ test_pts   = step/2 : step : 2*pi-step/2;
 %scatterer 1 coordinates
 X1 = -lambda + radius(1)*cos(test_pts);
 Y1 =           radius(1)*sin(test_pts);
+scatter(X)
 %scatterer 2 coordinates
 X2 = lambda + radius(2)*cos(test_pts);
 Y2 =          radius(2)*sin(test_pts);
