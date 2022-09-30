@@ -146,7 +146,7 @@ y = [Ei1, Ei2, zeros(1,2*N)];
 
 %solution vector
 x = A\y';
-% imagesc(abs(A)); colorbar;
+imagesc(abs(A)); colorbar;
 
 %finding the total field now using huygen principle
 oradius   = 200 * lambda;
@@ -188,14 +188,14 @@ end
 %% plotting the result
 
 %plotting the results of VIE for verification
-volume_two_disk
-
-%SIE results
-s = polarplot(onodes,-20*log10(2*pi*oradius*abs(farfield)),'blue');
-set(s,'LineWidth',3);
-legend({' VIE',' SIE'},'Location','northeast','Orientation','vertical')
-ax = gca; 
-ax.FontSize = 25; 
+% volume_two_disk
+% 
+% %SIE results
+% s = polarplot(onodes,-20*log10(2*pi*oradius*abs(farfield)),'blue');
+% set(s,'LineWidth',3);
+% legend({' VIE',' SIE'},'Location','northeast','Orientation','vertical')
+% ax = gca; 
+% ax.FontSize = 25; 
 toc
 
 %% defining functions
