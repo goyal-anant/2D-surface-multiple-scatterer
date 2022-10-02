@@ -99,7 +99,7 @@ for i = 1:2*N
         gk2  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k2);
         ggk2 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k2);
 
-        %r on object 1 and r prime on object 1
+        %r an r-prime both on S1
         if i<=N && j<=N
             if i==j
                 Q(i,j) = gdiag(k0);
@@ -108,35 +108,51 @@ for i = 1:2*N
                 Q(i,j) =  l(1) * gaussquad(gk0,n);
                 T(i,j) = -l(1) * gaussquad(ggk0,n);
             end
-        %r on object 2 and r prime on object 1
-        elseif i<=N && j>N
-            U(i,j-N) = -l(2) * gaussquad(gk0,n);
-            V(i,j-N) = -l(2) * gaussquad(ggk0,n);
-
-            Y(i,j-N) =  l(2) * gaussquad(gk2,n);
-            Z(i,j-N) = -l(2) * gaussquad(gk2,n);
-        %r on object 1 and r prime on object 2
-        elseif i>N && j<=N
-            Q(i,j)   =  l(1) * gaussquad(gk0,n);
-            T(i,j)   = -l(1) * gaussquad(ggk0,n);
-
-            W(i-N,j) =  l(1) * gaussquad(gk1,n);
-            X(i-N,j) = -l(1) * gaussquad(gk1,n);
-        %r on object 2 and r prime on object 2
-        elseif i>N && j>N
-            if i==j
-                %check if there would be -ve sign here or not
-                U(i,j-N) = -gdiag(k0);
-                V(i,j-N) = -1/2;
-            else
-                U(i,j-N) = -l(1) * gaussquad(gk0,n);
-                V(i,j-N) = -l(1) * gaussquad(ggk0,n);
-            end
         end
+
+%         %r on object 1 and r prime on object 1
+%         if i<=N && j<=N
+%             if i==j
+%                 Q(i,j) = gdiag(k0);
+%                 T(i,j) = 1/2;
+%             else
+%                 Q(i,j) =  l(1) * gaussquad(gk0,n);
+%                 T(i,j) = -l(1) * gaussquad(ggk0,n);
+%             end
+%         %r on object 2 and r prime on object 1
+%         elseif i<=N && j>N
+%             U(i,j-N) = -l(2) * gaussquad(gk0,n);
+%             V(i,j-N) = -l(2) * gaussquad(ggk0,n);
+% 
+%             Y(i,j-N) =  l(2) * gaussquad(gk2,n);
+%             Z(i,j-N) = -l(2) * gaussquad(gk2,n);
+%         %r on object 1 and r prime on object 2
+%         elseif i>N && j<=N
+%             Q(i,j)   =  l(1) * gaussquad(gk0,n);
+%             T(i,j)   = -l(1) * gaussquad(ggk0,n);
+% 
+%             W(i-N,j) =  l(1) * gaussquad(gk1,n);
+%             X(i-N,j) = -l(1) * gaussquad(gk1,n);
+%         %r on object 2 and r prime on object 2
+%         elseif i>N && j>N
+%             if i==j
+%                 %check if there would be -ve sign here or not
+%                 U(i,j-N) = -gdiag(k0);
+%                 V(i,j-N) = -1/2;
+%             else
+%                 U(i,j-N) = -l(1) * gaussquad(gk0,n);
+%                 V(i,j-N) = -l(1) * gaussquad(ggk0,n);
+%             end
+%         end
     end
 end
 %A = [Q T U V; W X O O; O O Y Z]
 A = [Q, T, U, V; W, X, zeros(N,N), zeros(N,N); zeros(N,N), zeros(N,N), Y, Z];
+
+%for diagonal scaling
+% temp = 0*ones(4*N,1);
+% scalematrix = diag(temp,0);
+% A = A + scalematrix;
 
 %creating y in Ax = y
 %y(1:N)=incident field on S1
@@ -146,7 +162,7 @@ y = [Ei1, Ei2, zeros(1,2*N)];
 
 %solution vector
 x = A\y';
-imagesc(abs(A)); colorbar;
+% imagesc(abs(A)); colorbar;
 
 %finding the total field now using huygen principle
 oradius   = 200 * lambda;
@@ -188,14 +204,14 @@ end
 %% plotting the result
 
 %plotting the results of VIE for verification
-% volume_two_disk
-% 
+volume_two_disk
+
 % %SIE results
-% s = polarplot(onodes,-20*log10(2*pi*oradius*abs(farfield)),'blue');
-% set(s,'LineWidth',3);
-% legend({' VIE',' SIE'},'Location','northeast','Orientation','vertical')
-% ax = gca; 
-% ax.FontSize = 25; 
+s = polarplot(onodes,-20*log10(2*pi*oradius*abs(farfield)),'blue');
+set(s,'LineWidth',3);
+legend({' VIE',' SIE'},'Location','northeast','Orientation','vertical')
+ax = gca; 
+ax.FontSize = 25; 
 toc
 
 %% defining functions
