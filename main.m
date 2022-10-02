@@ -92,12 +92,12 @@ for i = 1:2*N
         %green and grad green for region 0
         gk0  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k0);
         ggk0 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k0);
-        %green and grad green for region 1
-        gk1  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k1);
-        ggk1 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k1);
-        %green and grad green for region 2
-        gk2  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k2);
-        ggk2 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k2);
+%         %green and grad green for region 1
+%         gk1  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k1);
+%         ggk1 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k1);
+%         %green and grad green for region 2
+%         gk2  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k2);
+%         ggk2 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k2);
 
         %r an r-prime both on S1
         if i<=N && j<=N
@@ -108,7 +108,25 @@ for i = 1:2*N
                 Q(i,j) =  l(1) * gaussquad(gk0,n);
                 T(i,j) = -l(1) * gaussquad(ggk0,n);
             end
+        %r on S2 and r-prime on S1
+        elseif i<=N && j>N
+            U(i,j-N) = -l(2) * gaussquad(gk0,n);
+            V(i,j-N) = -l(2) * gaussquad(ggk0,n);
+        %r on S2 and r-prime on S1
+        elseif i>N && j<=N
+            Q(i,j) =  l(1) * gaussquad(gk0,n);
+            T(i,j) = -l(1) * gaussquad(ggk0,n);
+        %r and r-prime both on S2
+        elseif i>N && j>N
+            if i==j
+                U(i,j-N) = -gdiag(k0);
+                V(i,j-N) = -1/2;
+            else
+                U(i,j-N) = l(1) * gaussquad(gk0,n);
+                V(i,j-N) = l(1) * gaussquad(ggk0,n);
+            end
         end
+
 
 %         %r on object 1 and r prime on object 1
 %         if i<=N && j<=N
@@ -144,6 +162,72 @@ for i = 1:2*N
 %                 V(i,j-N) = -l(1) * gaussquad(ggk0,n);
 %             end
 %         end
+    end
+
+    for j = 1:N
+%         if j <= N
+            %first object
+            rnl = [-lambda + radius(1)*cos(test_pts(j) - (step/2)), radius(1)*sin(test_pts(j) - (step/2))];
+            rnu = [-lambda + radius(1)*cos(test_pts(j) + (step/2)), radius(1)*sin(test_pts(j) + (step/2))];
+            nhat= [-lambda + cos(test_pts(j)), sin(test_pts(j))];
+%         else
+%             %second object
+%             rnl = [lambda + radius(2)*cos(test_pts(j-N) - (step/2)), radius(2)*sin(test_pts(j-N) - (step/2))];
+%             rnu = [lambda + radius(2)*cos(test_pts(j-N) + (step/2)), radius(2)*sin(test_pts(j-N) + (step/2))];
+%             nhat= [lambda + cos(test_pts(j-N)), sin(test_pts(j-N))];
+%         end
+%         %green and grad green for region 0
+%         gk0  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k0);
+%         ggk0 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k0);
+        %green and grad green for region 1
+        gk1  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k1);
+        ggk1 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k1);
+%         %green and grad green for region 2
+%         gk2  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k2);
+%         ggk2 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k2);
+        
+        if i<=N
+            if i==j
+                W(i,j) = gdiag(k1);
+                X(i,j) = -1/2;
+            else
+                W(i,j) = l(1) * gaussquad(gk1,n);
+                X(i,j) = -l(1) * gaussquad(ggk1,n);
+            end
+        end
+    end
+
+    for j = N+1:2*N
+%         if j <= N
+%             %first object
+%             rnl = [-lambda + radius(1)*cos(test_pts(j) - (step/2)), radius(1)*sin(test_pts(j) - (step/2))];
+%             rnu = [-lambda + radius(1)*cos(test_pts(j) + (step/2)), radius(1)*sin(test_pts(j) + (step/2))];
+%             nhat= [-lambda + cos(test_pts(j)), sin(test_pts(j))];
+%         else
+            %second object
+            rnl = [lambda + radius(2)*cos(test_pts(j-N) - (step/2)), radius(2)*sin(test_pts(j-N) - (step/2))];
+            rnu = [lambda + radius(2)*cos(test_pts(j-N) + (step/2)), radius(2)*sin(test_pts(j-N) + (step/2))];
+            nhat= [lambda + cos(test_pts(j-N)), sin(test_pts(j-N))];
+%         end
+           %green and grad green for region 0
+%         gk0  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k0);
+%         ggk0 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k0);
+%         %green and grad green for region 1
+%         gk1  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k1);
+%         ggk1 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k1);
+        %green and grad green for region 2
+        gk2  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k2);
+        ggk2 = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k2);
+
+        if i>N
+            if i==j
+                Y(i-N,j-N) = gdiag(k2);
+                Z(i-N,j-N) = -1/2;
+            else
+                Y(i-N,j-N) = l(2) * gaussquad(gk2,n);
+                Z(i-N,j-N) = -l(2) * gaussquad(ggk2,n);
+            end
+        end
     end
 end
 %A = [Q T U V; W X O O; O O Y Z]
@@ -207,7 +291,7 @@ end
 volume_two_disk
 
 % %SIE results
-s = polarplot(onodes,-20*log10(2*pi*oradius*abs(farfield)),'blue');
+s = polarplot(onodes,-0.75*20*log10(2*pi*oradius*abs(farfield)),'blue');
 set(s,'LineWidth',3);
 legend({' VIE',' SIE'},'Location','northeast','Orientation','vertical')
 ax = gca; 
